@@ -1,10 +1,10 @@
-#include<Windows.h>
+п»ї#include<Windows.h>
 #include"resource.h"
 
 BOOL CALLBACK DlgProc(HWND hwnd, UINT uMsg, WPARAM wParam, LPARAM lParam);
 INT WINAPI WinMain(HINSTANCE hInstance, HINSTANCE hPrevInst, LPSTR lpCmdLine, INT nCmdShow)
 {
-	//MessageBox(NULL, "Привет мир! Я окно сообщения:-) ", "Info", MB_YESNOCANCEL | MB_ICONINFORMATION);
+	//MessageBox(NULL, "РџСЂРёРІРµС‚ РјРёСЂ! РЇ РѕРєРЅРѕ СЃРѕРѕР±С‰РµРЅРёСЏ:-) ", "Info", MB_YESNOCANCEL | MB_ICONINFORMATION);
 	DialogBoxParam(hInstance, MAKEINTRESOURCE(IDD_DIALOG1), 0, DlgProc, 0);
 	
 	return 0;
@@ -13,17 +13,17 @@ BOOL CALLBACK DlgProc(HWND hwnd, UINT uMsg, WPARAM wParam, LPARAM lParam)
 {
 	switch (uMsg)
 	{
-	case WM_INITDIALOG: //создаём элементы окна
+	case WM_INITDIALOG: //СЃРѕР·РґР°С‘Рј СЌР»РµРјРµРЅС‚С‹ РѕРєРЅР°
 	{
 		HICON hIcon = LoadIcon(GetModuleHandle(NULL), MAKEINTRESOURCE(IDI_ICON1));
 		SendMessage(hwnd, WM_SETICON, 0, (LPARAM)hIcon);
 	}	break;
-	case WM_COMMAND:   //обрабатываем команды нажатия на кнопки, наведение мыши...
+	case WM_COMMAND:   //РѕР±СЂР°Р±Р°С‚С‹РІР°РµРј РєРѕРјР°РЅРґС‹ РЅР°Р¶Р°С‚РёСЏ РЅР° РєРЅРѕРїРєРё, РЅР°РІРµРґРµРЅРёРµ РјС‹С€Рё...
 		switch (LOWORD(wParam))
 		{
 		case IDC_BUTTON_COPY:
 		{ 
-			HWND hEditLogin = GetDlgItem(hwnd, IDC_EDIT_LOGIN);//получение хендлера окна
+			HWND hEditLogin = GetDlgItem(hwnd, IDC_EDIT_LOGIN);//РїРѕР»СѓС‡РµРЅРёРµ С…РµРЅРґР»РµСЂР° РѕРєРЅР°
 			HWND hEditPassword = GetDlgItem(hwnd, IDC_EDIT_PASSWORD);
 			const int SIZE = 256;
 			char sz_buffer[SIZE] = {};
@@ -34,7 +34,7 @@ BOOL CALLBACK DlgProc(HWND hwnd, UINT uMsg, WPARAM wParam, LPARAM lParam)
 
 		}
 			break;
-		case IDOK: MessageBox(hwnd, "была нажата кнопка ОК", "Info", MB_OK | MB_ICONINFORMATION);
+		case IDOK: MessageBox(hwnd, "Р±С‹Р»Р° РЅР°Р¶Р°С‚Р° РєРЅРѕРїРєР° РћРљ", "Info", MB_OK | MB_ICONINFORMATION);
 		break;
 		case IDCANCEL: EndDialog(hwnd, 0); break;
 		}
