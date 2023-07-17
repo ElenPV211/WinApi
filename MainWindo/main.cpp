@@ -1,4 +1,5 @@
 #include<Windows.h>
+#include"resource.h"
 
 CONST CHAR g_sz_MY_WINDOW_CLASS[] = "MyFirstWindow";
 
@@ -18,10 +19,14 @@ INT WINAPI WinMain(HINSTANCE hInstance, HINSTANCE hPrevInst, LPSTR IpCmdLine, IN
 	 wc.cbWndExtra = 0; //WindowExtraBytes дополнительные байты окна
 	 wc.style = 0;
 
-	 //внешний вид окна, иконки и курсоры
-	 wc.hIcon = LoadIcon(hInstance, IDI_APPLICATION);
-	 wc.hIconSm = LoadIcon(hInstance, IDI_APPLICATION);
-	 wc.hCursor = LoadCursor(hInstance, IDC_ARROW);
+	 //внешний вид окна, иконки и курсоры, их мы можем загрузить
+	// wc.hIcon = LoadIcon(hInstance, MAKEINTRESOURCE(IDI_ICON_TREE));//отображается в панели задач
+	 //wc.hIconSm = LoadIcon(hInstance, MAKEINTRESOURCE(IDI_ICON_jupiter));//отображается в заголовке окна
+	
+	 wc.hIcon = (HICON)LoadImage(hInstance, "tree.ico",IMAGE_ICON,LR_DEFAULTSIZE,LR_DEFAULTSIZE,LR_LOADFROMFILE);
+	 wc.hIconSm = (HICON)LoadImage(hInstance, "jupiter.ico",IMAGE_ICON,LR_DEFAULTSIZE,LR_DEFAULTSIZE,LR_LOADFROMFILE);
+
+	 wc.hCursor = (HCURSOR)LoadImage(hInstance, "Normal.ani",IMAGE_CURSOR,LR_DEFAULTSIZE,LR_DEFAULTSIZE,LR_LOADFROMFILE);
 	 wc.hbrBackground = (HBRUSH)COLOR_WINDOW;
 
 	 wc.hInstance = hInstance;
@@ -61,14 +66,17 @@ INT WINAPI WinMain(HINSTANCE hInstance, HINSTANCE hPrevInst, LPSTR IpCmdLine, IN
 		 MessageBox(NULL, "окно не было создано", "Error", MB_OK | MB_ICONERROR);
 		 return 0;
 	 }
+	 ShowWindow(hwnd, nCmdShow);//задаёт режим отображения окна
+	 UpdateWindow(hwnd);//выполняет прорисовку окна
 
-	//3 Запуск цикла сообщенией
+	//3. Запуск цикла сообщенией
 
 MSG msg;
 while (GetMessage(&msg, NULL, 0, 0) > 0)
 {
-	TranslateMessage(&msg);//переведённое сообщение
-	DispatchMessage(&msg); //отправленное сообщение
+	TranslateMessage(&msg);//транслирует сообщение виртуальных клавиш в символьное сообщение
+	DispatchMessage(&msg); //отправляет сообщение в процедуру окна сообщение берёт от GetMessage
+	//которое вынимает сообщение из очереди msg
 }
 return msg.wParam;
 }
@@ -81,12 +89,17 @@ INT CALLBACK WndProc(HWND hwnd, UINT uMsg, WPARAM wParam, LPARAM lParam)
 {
 	switch (uMsg)
 	{
-	case WM_CREATE:
+	case WM_CREATE: //
 		break;
 	case WM_COMMAND:
 		break;
 	case WM_DESTROY: PostQuitMessage(0); break;
-	case WM_CLOSE:	DestroyWindow(hwnd); break;
+	case WM_CLOSE:	
+		if (MessageBox(hwnd, "вы действительно хотите закрыть окно?", "Question", MB_YESNO | MB_ICONQUESTION) == IDYES)
+		
+		DestroyWindow(hwnd); //уничтожает окно, хендлер которого передаём функции
+		//конкретно здесь функция DestroyWindow посылает сообщение WM_DESTROY
+		break;
 	default: return DefWindowProc(hwnd, uMsg, wParam, lParam);
 	}
 	return 0;
