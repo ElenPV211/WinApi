@@ -78,12 +78,14 @@ BOOL CALLBACK DlgProcAdd(HWND hwnd, UINT uMsg, WPARAM wParam, LPARAM lParam)
 		{
 			CONST INT SIZE = 256;
 			CHAR sz_buffer[SIZE] = {};
+			if (SendMessage(GetDlgItem(hwnd, IDC_EDIT_ADD), WM_GETTEXTLENGTH, 0, 0) == 0)break;
 			SendMessage(GetDlgItem(hwnd, IDC_EDIT_ADD), WM_GETTEXT, SIZE, (LPARAM)sz_buffer);
 			HWND hParent = GetParent(hwnd); //получаем родительское окно
 			HWND hList = GetDlgItem(hParent, IDC_LIST1);
 			
 			if (SendMessage(hList, LB_FINDSTRING, 0, (LPARAM)sz_buffer) == LB_ERR)
-				//LB_FINDSTRING -Ќаходит первую строку в списке, начинающуюс€ с указанной строки.
+				//LB_FINDSTRING - Ќаходит первую строку в списке, начинающуюс€ с указанной строки.
+				//¬озвращаемое значение Ч это индекс соответствующего элемента или LB_ERR, если поиск не удалс€.
 				SendMessage(hList, LB_ADDSTRING, 0, (LPARAM)sz_buffer);
 			else
 				MessageBox(hwnd, "“ака€ запись уже существует", "Info", MB_OK | MB_ICONINFORMATION);
