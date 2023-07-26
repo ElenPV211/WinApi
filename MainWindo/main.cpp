@@ -114,6 +114,7 @@ INT WINAPI WinMain(HINSTANCE hInstance, HINSTANCE hPrevInst, LPSTR lpCmdLine, IN
 //процедура самого обычного окна
 INT CALLBACK WndProc(HWND hwnd, UINT uMsg, WPARAM wParam, LPARAM lParam)
 {
+	//SetFocus(hwnd);
 	switch (uMsg) //по значению переменной выбирает один из множества вариантов кода
 	{
 	case WM_CREATE://аналог wm_create dialog сообщение wm_create посылается один
@@ -273,7 +274,9 @@ INT CALLBACK WndProc(HWND hwnd, UINT uMsg, WPARAM wParam, LPARAM lParam)
 	break;
 	case WM_COMMAND:
 	{
+
 		//соотношение клавиш с цифрами при нажатии на клавишу высвечивается цифра или точка
+		SetFocus(hwnd);
 		CONST INT SIZE = 256;
 		CHAR sz_buffer[SIZE] = {};
 		HWND hEdit = GetDlgItem(hwnd, IDC_EDIT);
@@ -316,8 +319,12 @@ INT CALLBACK WndProc(HWND hwnd, UINT uMsg, WPARAM wParam, LPARAM lParam)
 		if (LOWORD(wParam) == IDC_BUTTON_CLEAR)
 		{
 			SendMessage(hEdit, WM_SETTEXT, 0, (LPARAM)"0");//устанавливаем ноль в экран
-			a = 0;
+			a=b = 0;
 			stored = false;
+			input = false;
+			operation_input = false;
+			operation = 0;
+			//SetFocus(hwnd);
 		}
 
 		if (LOWORD(wParam) >= IDC_BUTTON_PLUS && LOWORD(wParam <= IDC_BUTTON_SLASH))
@@ -387,14 +394,14 @@ INT CALLBACK WndProc(HWND hwnd, UINT uMsg, WPARAM wParam, LPARAM lParam)
 			SendMessage(hwnd, WM_COMMAND, LOWORD(wParam) - 0x60 + 1000, 0);
 		switch (wParam)
 		{
-		case VK_OEM_PLUS:  SendMessage(hwnd, WM_COMMAND, IDC_BUTTON_PLUS, 0); break;
-		case VK_OEM_MINUS: SendMessage(hwnd, WM_COMMAND, IDC_BUTTON_MINUS, 0); break;
+		case VK_ADD:case VK_OEM_PLUS:  SendMessage(hwnd, WM_COMMAND, IDC_BUTTON_PLUS, 0); break;
+		case VK_SUBTRACT: case VK_OEM_MINUS: SendMessage(hwnd, WM_COMMAND, IDC_BUTTON_MINUS, 0); break;
 		case VK_MULTIPLY: SendMessage(hwnd, WM_COMMAND, IDC_BUTTON_ASTER, 0); break;
-		case VK_OEM_2: 
-		case VK_DIVIDE: SendMessage(hwnd, WM_COMMAND, IDC_BUTTON_SLASH, 0); break;
+		case VK_OEM_2: 	case VK_DIVIDE: SendMessage(hwnd, WM_COMMAND, IDC_BUTTON_SLASH, 0); break;
 		case VK_RETURN: SendMessage(hwnd, WM_COMMAND, IDC_BUTTON_EQUAL, 0); break;
+		case VK_ESCAPE: SendMessage(hwnd, WM_COMMAND, IDC_BUTTON_CLEAR, 0); break;
 		}
-		if (wParam == VK_OEM_PERIOD)SendMessage(hwnd, WM_COMMAND, IDC_BUTTON_POINT, 0);
+		if (wParam == VK_OEM_PERIOD||wParam==VK_DECIMAL)SendMessage(hwnd, WM_COMMAND, IDC_BUTTON_POINT, 0);
 
 		
 	}
