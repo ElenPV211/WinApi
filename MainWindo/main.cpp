@@ -131,7 +131,7 @@ INT CALLBACK WndProc(HWND hwnd, UINT uMsg, WPARAM wParam, LPARAM lParam)
 			//системные классы, доступные для использования всеми процессами.
 			//Имя окна.
 			"0",//"0"-появится нолик при запуске окна
-			WS_CHILD | WS_VISIBLE |  WS_BORDER|ES_RIGHT |ES_READONLY, //стили окна //WS_CHILD - Окно является дочерним окном. Окно с таким стилем не может иметь строку меню. 
+			WS_CHILD | WS_VISIBLE | WS_BORDER | ES_RIGHT | ES_READONLY, //стили окна //WS_CHILD - Окно является дочерним окном. Окно с таким стилем не может иметь строку меню. 
 			//| WS_VISIBLE - Окно изначально видно.| ES_RIGHT-  выравнивание по правому краю
 			g_i_START_X, g_i_START_Y,//координаты начала, относительно начала окна
 			g_i_DISPLAY_WIDTH, g_i_DISPLAY_HEIGHT,//размер окна
@@ -282,7 +282,7 @@ INT CALLBACK WndProc(HWND hwnd, UINT uMsg, WPARAM wParam, LPARAM lParam)
 		static double b = 0; //в а - мы будем хранить результаты, в b - будем получать число с экрана
 		static bool stored = false;
 		static bool input = false;
-		static bool operation_changed = false;
+		static bool operation_input = false;
 		static char operation = 0;
 		static char old_operation = 0;
 
@@ -327,19 +327,19 @@ INT CALLBACK WndProc(HWND hwnd, UINT uMsg, WPARAM wParam, LPARAM lParam)
 			if (a == 0)		a = b;
 			stored = true;
 			input = false;
-			operation_changed = true;
-			if (operation != old_operation && operation_changed)
+			if (/*operation == old_operation && */operation_input)
 			{
 				SendMessage(hwnd, WM_COMMAND, IDC_BUTTON_EQUAL, 0);
 				//operation_changed = false;
 			}
-		}
-		switch (LOWORD(wParam))
-		{
-		case IDC_BUTTON_PLUS:	operation = '+'; break;
-		case IDC_BUTTON_MINUS:	operation = '-'; break;
-		case IDC_BUTTON_ASTER:	operation = '*'; break;
-		case IDC_BUTTON_SLASH:	operation = '/'; break;
+			switch (LOWORD(wParam))
+			{
+			case IDC_BUTTON_PLUS:	operation = '+'; break;
+			case IDC_BUTTON_MINUS:	operation = '-'; break;
+			case IDC_BUTTON_ASTER:	operation = '*'; break;
+			case IDC_BUTTON_SLASH:	operation = '/'; break;
+			}
+			operation_input = true;
 		}
 
 
@@ -358,7 +358,7 @@ INT CALLBACK WndProc(HWND hwnd, UINT uMsg, WPARAM wParam, LPARAM lParam)
 			case '/': a /= b; break;
 			}
 			//old_operation = operation;
-			operation_changed = false;
+			operation_input = false;//после выполнения операции сбрасываем триггер
 			sprintf(sz_buffer, "%g", a);//преобразовать число в строку и загоняем в буфер а
 			SendMessage(hEdit, WM_SETTEXT, 0, (LPARAM)sz_buffer); //результат отображаем на экране когда
 			//нажимается знак равенства
@@ -379,7 +379,7 @@ INT CALLBACK WndProc(HWND hwnd, UINT uMsg, WPARAM wParam, LPARAM lParam)
 		case VK_DIVIDE: SendMessage(hwnd, WM_COMMAND, IDC_BUTTON_SLASH, 0); break;
 		case VK_RETURN: SendMessage(hwnd, WM_COMMAND, IDC_BUTTON_EQUAL, 0); break;
 		}
-		if (wParam == VK_OEM_PERIOD)SendMessage(hwnd,WM_COMMAND, IDC_BUTTON_POINT, 0);
+		if (wParam == VK_OEM_PERIOD)SendMessage(hwnd, WM_COMMAND, IDC_BUTTON_POINT, 0);
 
 		if (wParam >= 0x30 && wParam <= 0x39)
 		{
