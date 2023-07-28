@@ -333,12 +333,12 @@ INT CALLBACK WndProc(HWND hwnd, UINT uMsg, WPARAM wParam, LPARAM lParam)
 			if (input)b = strtod(sz_buffer, NULL);//strtod возвращает значение числа с плавающей запятой
 			if (a == 0)		a = b;
 			stored = true;
-			input = false;
-			if (/*operation == old_operation && */operation_input)
+			if (input && operation_input)//усли вводилась и цифра и операция
 			{
 				SendMessage(hwnd, WM_COMMAND, IDC_BUTTON_EQUAL, 0);
 				//operation_changed = false;
 			}
+			input = false;
 			switch (LOWORD(wParam))
 			{
 			case IDC_BUTTON_PLUS:	operation = '+'; break;
