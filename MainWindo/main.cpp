@@ -43,7 +43,8 @@ INT WINAPI WinMain(HINSTANCE hInstance, HINSTANCE hPrevInst, LPSTR lpCmdLine, IN
 	//wc.hCursor = LoadCursor(hInstance, IDC_ARROW);//стандартный вызов курсора
 	wc.hCursor = (HCURSOR)LoadImage(hInstance, "Busy.ani", IMAGE_CURSOR, LR_DEFAULTSIZE, LR_DEFAULTSIZE, LR_LOADFROMFILE);
 
-	wc.hbrBackground = (HBRUSH)COLOR_WINDOW;
+	//wc.hbrBackground = (HBRUSH)COLOR_WINDOW; //цвет окна стандарт
+	wc.hbrBackground = CreateSolidBrush(RGB(0, 0, 200));
 
 	//
 	wc.hInstance = hInstance;
@@ -135,7 +136,7 @@ INT CALLBACK WndProc(HWND hwnd, UINT uMsg, WPARAM wParam, LPARAM lParam)
 			//системные классы, доступные для использования всеми процессами.
 			//Имя окна.
 			"0",//"0"-появится нолик при запуске окна
-			WS_CHILD | WS_VISIBLE | WS_BORDER | ES_RIGHT | ES_READONLY, //стили окна //WS_CHILD - Окно является дочерним окном. Окно с таким стилем не может иметь строку меню. 
+			WS_CHILD | WS_VISIBLE | WS_BORDER | ES_RIGHT /* | ES_READONLY*/, //стили окна //WS_CHILD - Окно является дочерним окном. Окно с таким стилем не может иметь строку меню. 
 			//| WS_VISIBLE - Окно изначально видно.| ES_RIGHT-  выравнивание по правому краю
 			g_i_START_X, g_i_START_Y,//координаты начала, относительно начала окна
 			g_i_DISPLAY_WIDTH, g_i_DISPLAY_HEIGHT,//размер окна
@@ -160,8 +161,10 @@ INT CALLBACK WndProc(HWND hwnd, UINT uMsg, WPARAM wParam, LPARAM lParam)
 			DEFAULT_PITCH | FF_DONTCARE,
 			g_sz_DISPLAY_FONT
 			);
-
 		SendMessage(hEdit, WM_SETFONT, (WPARAM)hFont, TRUE);
+		
+	
+
 		//создание окон в цикле
 		CHAR sz_btn_name[] = "0";
 		INT number = 1;
@@ -275,6 +278,17 @@ INT CALLBACK WndProc(HWND hwnd, UINT uMsg, WPARAM wParam, LPARAM lParam)
 			hwnd, (HMENU)IDC_BUTTON_EQUAL,
 			GetModuleHandle(NULL), NULL
 		);
+	}
+	break;
+	case WM_CTLCOLOREDIT:
+	{
+		//меняем шрифт
+		HDC hdc = (HDC)wParam;
+		SetBkMode(hdc, OPAQUE);
+		SetBkColor(hdc, RGB(0, 0, 100));
+		HBRUSH hBrush = CreateSolidBrush(RGB(0, 0, 255));
+		SetTextColor(hdc, RGB(255, 0, 0));
+		return (LRESULT)hBrush;
 	}
 	break;
 	case WM_SIZE://размер окна
