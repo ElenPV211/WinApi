@@ -11,7 +11,10 @@ CONST INT g_i_DISTANCE = 10;  //расстояние между кнопками
 CONST INT g_i_START_X = 10;  //отступ от начала окна
 CONST INT g_i_START_Y = 10;  //отступ от начала окна
 CONST INT g_i_DISPLAY_WIDTH = g_i_BTN_SIZE * 5 + g_i_DISTANCE * 4; //ширина окошка дисплея
-CONST INT g_i_DISPLAY_HEIGHT = 18;//высота окошка дисплея
+CONST INT g_i_DISPLAY_HEIGHT = 32;//высота окошка дисплея
+CONST char g_sz_DISPLAY_FONT[] = "Arial";
+CONST INT g_i_DISPLAY_FONT_HEIGHT = g_i_DISPLAY_HEIGHT - 2;
+CONST INT g_i_DISPLAY_FONT_WIDTH = g_i_DISPLAY_FONT_HEIGHT / 2.5;
 
 INT CALLBACK WndProc(HWND hwnd, UINT uMsg, WPARAM wParam, LPARAM lParam);//процедура окна
 
@@ -141,6 +144,24 @@ INT CALLBACK WndProc(HWND hwnd, UINT uMsg, WPARAM wParam, LPARAM lParam)
 			GetModuleHandle(NULL),//hInstance получаем по функции GetModuleHandle(NULL)
 			NULL
 		);
+		/*LOGFONT lFont;
+		ZeroMemory(&lFont, sizeof(LOGFONT));
+		lFont.lfCharSet = DEFAULT_CHARSET;
+		lFont.lfHeight = -20;
+		HFONT hFont = CreateFontIndirect(&lFont);*/
+		HFONT hFont = CreateFont
+		(g_i_DISPLAY_FONT_HEIGHT,g_i_DISPLAY_FONT_WIDTH,//высота ширина шрифта
+			GM_ADVANCED,0,600,//Escapement, Oriental, Weight - толщина шрифта
+			FALSE,FALSE,FALSE, //Itlic -курсив,Underline - подчёркивание,Strikeout - перечёркнутый
+			DEFAULT_CHARSET, //кодировка
+			OUT_CHARACTER_PRECIS,
+            CLIP_CHARACTER_PRECIS,
+			ANTIALIASED_QUALITY,
+			DEFAULT_PITCH | FF_DONTCARE,
+			g_sz_DISPLAY_FONT
+			);
+
+		SendMessage(hEdit, WM_SETFONT, (WPARAM)hFont, TRUE);
 		//создание окон в цикле
 		CHAR sz_btn_name[] = "0";
 		INT number = 1;
@@ -151,12 +172,12 @@ INT CALLBACK WndProc(HWND hwnd, UINT uMsg, WPARAM wParam, LPARAM lParam)
 			{
 				//https://learn.microsoft.com/en-us/windows/win32/controls/button-styles
 				sz_btn_name[0] = number + 48; //начинаем нумерацию с единицы, 48 это  на аски коде '0', 49 это 1
-				CreateWindowEx
+				HWND hButtonDigit = CreateWindowEx
 				(
 					NULL,
 					"Button",
 					sz_btn_name,
-					WS_CHILD | WS_VISIBLE | BS_PUSHBUTTON,//стили
+					WS_CHILD | WS_VISIBLE | BS_PUSHBUTTON |BS_ICON,//стили
 					g_i_START_X +/*g_i_DISTANCE +*/ (g_i_BTN_SIZE + g_i_DISTANCE) * j,
 					g_i_START_Y + g_i_DISTANCE + (g_i_BTN_SIZE + g_i_DISTANCE) * (2 - i) + g_i_DISPLAY_HEIGHT,
 					g_i_BTN_SIZE, g_i_BTN_SIZE,
@@ -164,6 +185,9 @@ INT CALLBACK WndProc(HWND hwnd, UINT uMsg, WPARAM wParam, LPARAM lParam)
 					(HMENU)(number + 1000),
 					GetModuleHandle(NULL),//hInstance получаем
 					NULL
+				);
+				SendMessage(hButtonDigit, BM_SETIMAGE, IMAGE_ICON,
+					(LPARAM)LoadIcon(GetModuleHandle(NULL), MAKEINTRESOURCE(number + 200))
 				);
 				number++;
 			}
@@ -200,15 +224,17 @@ INT CALLBACK WndProc(HWND hwnd, UINT uMsg, WPARAM wParam, LPARAM lParam)
 			GetModuleHandle(NULL), NULL
 		);
 		/////////////////////////------*----//////////
-		CreateWindowEx
+		HWND hBtnAster = CreateWindowEx
 		(
 			NULL, "Button", "*"/*WindowName*/,
-			WS_CHILD | WS_VISIBLE | BS_PUSHBUTTON,
+			WS_CHILD | WS_VISIBLE | BS_PUSHBUTTON | BS_ICON,
 			g_i_START_X + (g_i_BTN_SIZE + g_i_DISTANCE) * 3, g_i_START_Y + g_i_BTN_SIZE + g_i_DISTANCE * 2 + g_i_DISPLAY_HEIGHT,
 			g_i_BTN_SIZE, g_i_BTN_SIZE,
 			hwnd, (HMENU)IDC_BUTTON_ASTER,
 			GetModuleHandle(NULL), NULL
 		);
+		HICON hIconAster = LoadIcon(GetModuleHandle(NULL), MAKEINTRESOURCE(IDI_ICON_TREE));//на место звездочки устанавливается иконка
+		SendMessage(hBtnAster, BM_SETIMAGE, IMAGE_ICON,(LPARAM)hIconAster);
 		/////////////////////////-----/-/----//////////
 		CreateWindowEx
 		(

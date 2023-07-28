@@ -56,6 +56,17 @@ IDI_ICON_jupiter        ICON                    "jupiter.ico"
 
 IDI_ICON_TREE           ICON                    "tree.ico"
 
+IDI_ICON_0				ICON					"ICON\\0.ico"
+IDI_ICON_1				ICON					"ICON\\1.ico"
+IDI_ICON_2				ICON					"ICON\\2.ico"
+IDI_ICON_3				ICON					"ICON\\3.ico"
+IDI_ICON_4				ICON					"ICON\\4.ico"
+IDI_ICON_5				ICON					"ICON\\5.ico"
+IDI_ICON_6				ICON					"ICON\\6.ico"
+IDI_ICON_7				ICON					"ICON\\7.ico"
+IDI_ICON_8				ICON					"ICON\\8.ico"
+IDI_ICON_9				ICON					"ICON\\9.ico"
+
 #endif    // Russian (Russia) resources
 /////////////////////////////////////////////////////////////////////////////
 
