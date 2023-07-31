@@ -56,8 +56,8 @@ IDI_ICON_jupiter        ICON                    "jupiter.ico"
 
 IDI_ICON_TREE           ICON                    "tree.ico"
 
-IDI_ICON_0				ICON					"ICON\\0.ico"
-IDI_ICON_1				ICON					"ICON\\1.ico"
+IDI_ICON_0				ICON					"Icon\\0.ico"
+IDI_ICON_1				ICON					"Icon\\1.ico"
 IDI_ICON_2				ICON					"ICON\\2.ico"
 IDI_ICON_3				ICON					"ICON\\3.ico"
 IDI_ICON_4				ICON					"ICON\\4.ico"
@@ -66,6 +66,15 @@ IDI_ICON_6				ICON					"ICON\\6.ico"
 IDI_ICON_7				ICON					"ICON\\7.ico"
 IDI_ICON_8				ICON					"ICON\\8.ico"
 IDI_ICON_9				ICON					"ICON\\9.ico"
+
+
+IDI_ICON_POINT          ICON                    "ICON\\Point.ico"
+IDI_ICON_PLUS           ICON                    "ICON\\Plus.ico"
+IDI_ICON_MINUS          ICON                    "ICON\\Minus.ico"
+IDI_ICON_ASTER          ICON                    "ICON\\Aster.ico"
+IDI_ICON_SLASH          ICON                    "ICON\\Slash.ico"
+IDI_ICON_EQUAL          ICON                    "ICON\\Equal.ico"
+IDI_ICON_CLEAR          ICON                    "ICON\\C.ico"
 
 #endif    // Russian (Russia) resources
 /////////////////////////////////////////////////////////////////////////////

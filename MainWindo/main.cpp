@@ -196,36 +196,45 @@ INT CALLBACK WndProc(HWND hwnd, UINT uMsg, WPARAM wParam, LPARAM lParam)
 			}
 		}
 		/////////////////////////------0--//////////
-		CreateWindowEx
+		HWND hBtnNULL = CreateWindowEx
 		(
 			NULL, "Button", "0"/*WindowName*/,
-			WS_CHILD | WS_VISIBLE | BS_PUSHBUTTON,
+			WS_CHILD | WS_VISIBLE | BS_PUSHBUTTON | BS_ICON,
 			g_i_START_X, g_i_START_Y + g_i_BTN_SIZE * 3 + g_i_DISTANCE * 4 + g_i_DISPLAY_HEIGHT,
 			g_i_BTN_SIZE * 2 + g_i_DISTANCE, g_i_BTN_SIZE,
 			hwnd, (HMENU)IDC_BUTTON_0,
 			GetModuleHandle(NULL), NULL
 		);
+		HICON hIconNULL = LoadIcon(GetModuleHandle(NULL), MAKEINTRESOURCE(IDI_ICON_0));//вместо IDI_ICON_0 можно 200, работает
+		SendMessage(hBtnNULL, BM_SETIMAGE, IMAGE_ICON, (LPARAM)hIconNULL);
+
 		/////////////////////////-----.--//////////
-		CreateWindowEx
+		HWND hBtnPoint = CreateWindowEx
 		(
 			NULL, "Button", "."/*WindowName*/,
-			WS_CHILD | WS_VISIBLE | BS_PUSHBUTTON,
+			WS_CHILD | WS_VISIBLE | BS_PUSHBUTTON | BS_ICON,
 			g_i_START_X + g_i_BTN_SIZE * 2 + g_i_DISTANCE * 2, g_i_START_Y + g_i_BTN_SIZE * 3 + g_i_DISTANCE * 4 + g_i_DISPLAY_HEIGHT,
 			g_i_BTN_SIZE, g_i_BTN_SIZE,
 			hwnd, (HMENU)IDC_BUTTON_POINT,
 			GetModuleHandle(NULL), NULL
 		);
+		HICON hIconPoint = LoadIcon(GetModuleHandle(NULL), MAKEINTRESOURCE(IDI_ICON_POINT));
+		SendMessage(hBtnPoint, BM_SETIMAGE, IMAGE_ICON, (LPARAM)hIconPoint);
+
 
 		/////////////////////////------/----//////////
-		CreateWindowEx
+		HWND hBtnSlash = CreateWindowEx
 		(
 			NULL, "Button", "/"/*WindowName*/,
-			WS_CHILD | WS_VISIBLE | BS_PUSHBUTTON,
+			WS_CHILD | WS_VISIBLE | BS_PUSHBUTTON | BS_ICON,
 			g_i_START_X + (g_i_BTN_SIZE + g_i_DISTANCE) * 3, g_i_START_Y + g_i_DISTANCE + g_i_DISPLAY_HEIGHT,
 			g_i_BTN_SIZE, g_i_BTN_SIZE,
 			hwnd, (HMENU)IDC_BUTTON_SLASH,
 			GetModuleHandle(NULL), NULL
 		);
+		HICON hIconSlash = LoadIcon(GetModuleHandle(NULL), MAKEINTRESOURCE(IDI_ICON_SLASH));
+		SendMessage(hBtnSlash, BM_SETIMAGE, IMAGE_ICON, (LPARAM)hIconSlash);
+
 		/////////////////////////------*----//////////
 		HWND hBtnAster = CreateWindowEx
 		(
@@ -239,45 +248,57 @@ INT CALLBACK WndProc(HWND hwnd, UINT uMsg, WPARAM wParam, LPARAM lParam)
 		HICON hIconAster = LoadIcon(GetModuleHandle(NULL), MAKEINTRESOURCE(IDI_ICON_TREE));//на место звездочки устанавливается иконка
 		SendMessage(hBtnAster, BM_SETIMAGE, IMAGE_ICON,(LPARAM)hIconAster);
 		/////////////////////////-----/-/----//////////
-		CreateWindowEx
+		HWND hBtnMinus = CreateWindowEx
 		(
 			NULL, "Button", "-"/*WindowName*/,
-			WS_CHILD | WS_VISIBLE | BS_PUSHBUTTON,
+			WS_CHILD | WS_VISIBLE | BS_PUSHBUTTON | BS_ICON,
 			g_i_START_X + (g_i_BTN_SIZE + g_i_DISTANCE) * 3, g_i_START_Y + g_i_BTN_SIZE * 2 + g_i_DISTANCE * 3 + g_i_DISPLAY_HEIGHT,
 			g_i_BTN_SIZE, g_i_BTN_SIZE,
 			hwnd, (HMENU)IDC_BUTTON_MINUS,
 			GetModuleHandle(NULL), NULL
 		);
+		HICON hIconMinus = LoadIcon(GetModuleHandle(NULL), MAKEINTRESOURCE(IDI_ICON_MINUS));
+		SendMessage(hBtnMinus, BM_SETIMAGE, IMAGE_ICON, (LPARAM)hIconMinus);
+
 		/////////////////////////-----+----//////////
-		CreateWindowEx
+		HWND hBtnPlus = CreateWindowEx
 		(
 			NULL, "Button", "+"/*WindowName*/,
-			WS_CHILD | WS_VISIBLE | BS_PUSHBUTTON,
+			WS_CHILD | WS_VISIBLE | BS_PUSHBUTTON | BS_ICON,
 			g_i_START_X + (g_i_BTN_SIZE + g_i_DISTANCE) * 3, g_i_START_Y + g_i_BTN_SIZE * 3 + g_i_DISTANCE * 4 + g_i_DISPLAY_HEIGHT,
 			g_i_BTN_SIZE, g_i_BTN_SIZE,
 			hwnd, (HMENU)IDC_BUTTON_PLUS,
 			GetModuleHandle(NULL), NULL
 		);
+		HICON hIconPlus = LoadIcon(GetModuleHandle(NULL), MAKEINTRESOURCE(IDI_ICON_PLUS));
+		SendMessage(hBtnPlus, BM_SETIMAGE, IMAGE_ICON, (LPARAM)hIconPlus);
+
 		/////////////////////////------C----//////////
-		CreateWindowEx
+		HWND hBtnClear = CreateWindowEx
 		(
 			NULL, "Button", "C"/*WindowName*/,
-			WS_CHILD | WS_VISIBLE | BS_PUSHBUTTON,
+			WS_CHILD | WS_VISIBLE | BS_PUSHBUTTON | BS_ICON,
 			g_i_START_X + (g_i_BTN_SIZE + g_i_DISTANCE) * 4, g_i_START_Y + g_i_DISTANCE + g_i_DISPLAY_HEIGHT,
 			g_i_BTN_SIZE, g_i_BTN_SIZE * 2 + g_i_DISTANCE,
 			hwnd, (HMENU)IDC_BUTTON_CLEAR,
 			GetModuleHandle(NULL), NULL
 		);
+		HICON hIconClear = LoadIcon(GetModuleHandle(NULL), MAKEINTRESOURCE(IDI_ICON_CLEAR));
+		SendMessage(hBtnClear, BM_SETIMAGE, IMAGE_ICON, (LPARAM)hIconClear);
+
 		/////////////////////////------=----//////////
-		CreateWindowEx
+		HWND hBtnEqual = CreateWindowEx
 		(
 			NULL, "Button", "="/*WindowName*/,
-			WS_CHILD | WS_VISIBLE | BS_PUSHBUTTON,
+			WS_CHILD | WS_VISIBLE | BS_PUSHBUTTON | BS_ICON,
 			g_i_START_X + (g_i_BTN_SIZE + g_i_DISTANCE) * 4, g_i_START_Y + g_i_DISTANCE * 3 + g_i_BTN_SIZE * 2 + g_i_DISPLAY_HEIGHT,
 			g_i_BTN_SIZE, g_i_BTN_SIZE * 2 + g_i_DISTANCE,
 			hwnd, (HMENU)IDC_BUTTON_EQUAL,
 			GetModuleHandle(NULL), NULL
 		);
+		HICON hIconEqual = LoadIcon(GetModuleHandle(NULL), MAKEINTRESOURCE(IDI_ICON_EQUAL));
+		SendMessage(hBtnEqual, BM_SETIMAGE, IMAGE_ICON, (LPARAM)hIconEqual);
+
 	}
 	break;
 	case WM_CTLCOLOREDIT:
