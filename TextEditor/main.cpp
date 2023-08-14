@@ -1,16 +1,24 @@
+#define _CRT_SECURE_NO_WARNINGS
 #include<Windows.h>
 #include<Richedit.h>
 #include"resource.h"
 
 CONST CHAR g_sz_CLASS_NAME[] = "Text Editor PV_211";
+
 //g_ - Global
 //sz_ - string zero, строка заканчивающаяся нулем
-
+HFONT g_hFont = (HFONT)GetStockObject(DEFAULT_GUI_FONT);
+COLORREF  g_RGB_Text = RGB(0, 0, 0);
+COLORREF  g_rgbBackground = RGB(255, 255, 255);
+COLORREF g_rgbCustom[16] = {};
 
 LRESULT CALLBACK WndProc(HWND hwnd, UINT uMsg, WPARAM wParam, LPARAM lParam);//объявление процедуры окна
 
-BOOL LoadTextFileToEdit(HWND hEdit, LPCSTR lpszFileName);
+BOOL LoadTextFileToEdit(HWND hEdit, LPCSTR lpszFileName, LPCSTR lpszFileContent);
 BOOL SaveTextFileFromEdit(HWND hEdit, LPCSTR lpszFileName);
+
+VOID SelectFont(HWND hwnd);
+VOID SelectColor(HWND hwnd);
 //
 
 
@@ -76,8 +84,8 @@ INT WINAPI WinMain(HINSTANCE hInstance, HINSTANCE hPrevInst, LPSTR lpCmdLine, IN
 }
 LRESULT CALLBACK WndProc(HWND hwnd, UINT uMsg, WPARAM wParam, LPARAM lParam)
 {
-	static CHAR szFileName[MAX_PATH] = {};
-	static CHAR szFileContent = NULL;
+	static CHAR lpszFileName[MAX_PATH] = {};
+	static LPSTR lpszFileContent = (LPSTR)GlobalAlloc(GPTR, 256);
 	switch (uMsg)
 	{
 	case WM_CREATE:
@@ -117,22 +125,22 @@ LRESULT CALLBACK WndProc(HWND hwnd, UINT uMsg, WPARAM wParam, LPARAM lParam)
 			ofn.hwndOwner = hwnd;
 			//фильтры
 			ofn.lpstrFilter = "Text files: (*.txt)\0*.txt\0All files (*.*)\0*.*\0";
-			ofn.lpstrFile = szFileName;
+			ofn.lpstrFile = lpszFileName;
 			ofn.nMaxFile = MAX_PATH;//максимально возможная длина пути
 			ofn.Flags = OFN_EXPLORER | OFN_FILEMUSTEXIST | OFN_HIDEREADONLY;//OFN_EXPLORER-Чтобы отобразить диалоговое окно множественного
 			//выбора в стиле проводника, OFN_FILEMUSTEXIST - файл должен существовать, OFN_HIDEREADONLY - скрыть только для чтения 
 			ofn.lpstrDefExt = "txt";//расширение
 
-			if (GetOpenFileName(&ofn)) LoadTextFileToEdit(GetDlgItem(hwnd, IDC_EDIT), szFileName);
+			if (GetOpenFileName(&ofn)) LoadTextFileToEdit(GetDlgItem(hwnd, IDC_EDIT), lpszFileName, lpszFileContent);
 
 		}
 		break;
 		case ID_FILE_SAVE:
 		{
-			if (szFileName[0] == 0)
+			if (lpszFileName[0] == 0)
 				SendMessage(hwnd, WM_COMMAND, ID_FILE_SAVEAS, 0);
 			else
-				SaveTextFileFromEdit(GetDlgItem(hwnd, IDC_EDIT), szFileName);
+				SaveTextFileFromEdit(GetDlgItem(hwnd, IDC_EDIT), lpszFileName);
 		}
 		break;
 		case ID_FILE_SAVEAS://сохранить как - пункт менюшки реализуем
@@ -144,14 +152,16 @@ LRESULT CALLBACK WndProc(HWND hwnd, UINT uMsg, WPARAM wParam, LPARAM lParam)
 			ofn.lStructSize = sizeof(ofn); //должны быть одного размера
 			ofn.hwndOwner = hwnd;// родительское окно
 			ofn.lpstrFilter = "Text files (*.txt)\0*.txt\0AllFiles (*.*)\0*.*\0";	//Double NULL-Terminated line, фильтры тип файла
-			ofn.lpstrFile = szFileName;
+			ofn.lpstrFile = lpszFileName;
 			ofn.nMaxFile = MAX_PATH;
 			ofn.Flags = OFN_EXPLORER | OFN_PATHMUSTEXIST | OFN_HIDEREADONLY | OFN_OVERWRITEPROMPT;//открывыть или сохранять файлы,внешний вид окна
 			ofn.lpstrDefExt = "txt";//расширение по умолчанию
 			//
-			if (GetSaveFileName(&ofn))SaveTextFileFromEdit(GetDlgItem(hwnd, IDC_EDIT), szFileName);//вызываем нашу функцию
+			if (GetSaveFileName(&ofn))SaveTextFileFromEdit(GetDlgItem(hwnd, IDC_EDIT), lpszFileName);//вызываем нашу функцию
 		}
 		break;
+		case ID_FORMAT_FONT: SelectFont(hwnd);	break;
+		case ID_FORMAT_COLOR: SelectColor(hwnd); break;
 		}
 	}
 	break;
@@ -166,19 +176,29 @@ LRESULT CALLBACK WndProc(HWND hwnd, UINT uMsg, WPARAM wParam, LPARAM lParam)
 		if (lpszText != NULL)
 		{
 			SendMessage(hEdit, WM_GETTEXT, UINT_MAX, (LPARAM)lpszText);
-			if (lpszText[0])
+			if (lpszFileContent && strcmp(lpszFileContent, lpszText))
 			{
-				switch (MessageBox(hwnd, "сохранить изменения?", "Вопрос", MB_YESNOCANCEL | MB_ICONQUESTION))
+				switch (MessageBox(hwnd, "Сохранить изменения?", "Вопрос", MB_YESNOCANCEL | MB_ICONQUESTION))
 				{
 				case IDYES: SendMessage(hwnd, WM_COMMAND, ID_FILE_SAVE, 0);
 				case IDNO:  close = TRUE;
 					//case IDCANCEL:return DefWindowProc(hwnd, uMsg, wParam, lParam); break;
 				}
+
 			}
+			//else if (lpszText[0])
+			//{
+			//	switch (MessageBox(hwnd, "Сохранить изменения?", "Вопрос", MB_YESNOCANCEL | MB_ICONQUESTION))
+			//	{
+			//	case IDYES: SendMessage(hwnd, WM_COMMAND, ID_FILE_SAVE, 0);
+			//	case IDNO:  close = TRUE;
+			//	}
+			//}
 			else close = TRUE;
-				GlobalFree(lpszText);
-		}		
-			if (close)DestroyWindow(hwnd);
+			GlobalFree(lpszText);
+			GlobalFree(lpszFileContent);
+		}
+		if (close)DestroyWindow(hwnd);
 	}
 	break;
 	default: return DefWindowProc(hwnd, uMsg, wParam, lParam); break;
@@ -187,7 +207,7 @@ LRESULT CALLBACK WndProc(HWND hwnd, UINT uMsg, WPARAM wParam, LPARAM lParam)
 	//
 }
 //функция которая позволит открыть файл
-BOOL LoadTextFileToEdit(HWND hEdit, LPCSTR lpszFileName)
+BOOL LoadTextFileToEdit(HWND hEdit, LPCSTR lpszFileName, LPCSTR lpszFileContent)
 
 {
 	BOOL bSuccess = FALSE;
@@ -198,12 +218,14 @@ BOOL LoadTextFileToEdit(HWND hEdit, LPCSTR lpszFileName)
 		if (dwFileSize != UINT_MAX)//если не равно макс размеру текстовый файл 4ГБ
 		{
 			LPSTR lpszFileText = (LPSTR)GlobalAlloc(GPTR, dwFileSize + 1);//выделили память
+			LPSTR lpszFileContent = (LPSTR)GlobalAlloc(GPTR, dwFileSize + 1);//выделили память
 			if (lpszFileText) //если не равен нулю
 			{
 				DWORD dwRead;
 				if (ReadFile(hFile, lpszFileText, dwFileSize, &dwRead, NULL))// в индикатор &dwRead записывается сколько мы прочитали из файлика
 				{
 					lpszFileText[dwFileSize] = 0;//зануляем 
+					strcpy(lpszFileContent, lpszFileText);
 					if (SendMessage(hEdit, WM_SETTEXT, 0, (LPARAM)lpszFileText))bSuccess = TRUE;//если вместо lpszFileText lpszFileName, то в текст
 					//загоняется имя файла (весь путь)
 				}
@@ -239,4 +261,54 @@ BOOL SaveTextFileFromEdit(HWND hEdit, LPCSTR lpszFileName)
 	}
 	return bSuccess;
 
+}
+VOID SelectFont(HWND hwnd)
+{
+	CHOOSEFONT cf;
+	LOGFONT lf;
+	HWND hEdit = GetDlgItem(hwnd, IDC_EDIT);
+
+	ZeroMemory(&cf, sizeof(cf));
+	ZeroMemory(&lf, sizeof(lf));
+
+	GetObject(g_hFont, sizeof(LOGFONT), &lf);
+
+	cf.lStructSize = sizeof(cf);
+	cf.hwndOwner = hwnd;
+
+	cf.Flags = CF_EFFECTS | CF_INITTOLOGFONTSTRUCT | CF_SCREENFONTS;
+	cf.hInstance = GetModuleHandle(NULL);
+	cf.lpLogFont = &lf;
+	cf.rgbColors = g_RGB_Text;
+
+	if (ChooseFont(&cf))
+	{
+		HFONT hf = CreateFontIndirect(&lf);
+		if (hf)
+		{
+			g_hFont
+				= hf;
+		}
+		else
+		{
+			MessageBox(hwnd, "Font", "Error", MB_OK | MB_ICONERROR);
+		}
+		g_RGB_Text = cf.rgbColors;
+	}
+	SendMessage(hEdit, WM_SETFONT, (WPARAM)g_hFont, TRUE);
+	SetFocus(hEdit);
+}
+VOID SelectColor(HWND hwnd)
+{
+	HWND hEdit = GetDlgItem(hwnd, IDC_EDIT);
+	HDC hdc = GetDC(hwnd);
+	CHOOSECOLOR cc = { sizeof(CHOOSECOLOR) };
+	cc.Flags = CC_RGBINIT | CC_FULLOPEN | CC_ANYCOLOR;
+	cc.hwndOwner = hwnd;
+	cc.rgbResult = g_rgbBackground;
+	cc.lpCustColors = g_rgbCustom;
+
+	if (ChooseColor(&cc))g_rgbBackground = cc.rgbResult;
+	//SendMessage(GetDlgItem(hwnd, IDC_EDIT), EMR_SETTEXTCOLOR, );
+	SetTextColor();
 }
